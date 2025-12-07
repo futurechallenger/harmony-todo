@@ -1,11 +1,13 @@
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { SettingsComponent } from '../components/settings-component'
-import { TodoList } from '../components/todo-list';
+import { SettingsComponent } from '../components/settings_component'
+import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
+import { AddTodoDialog } from '../components/add_todo_dialog';
 
 @Entry
 @ComponentV2
 struct Index {
+  private dialogComponentId: number = -1
   // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
@@ -16,11 +18,16 @@ struct Index {
         operation: NavigationOperation, animated: boolean) => {
         console.log(`Navigation will show from: ${from} to: ${to}, param: ${JSON.stringify(operation.toString())}`)
 
-        if(typeof to === 'string') {
+        if (typeof to === 'string') {
           this.showFloatingButton = true
         }
       }
     })
+  }
+
+  @Builder
+  dialogComponent() {
+    AddTodoDialog()
   }
 
   @Builder
@@ -77,6 +84,22 @@ struct Index {
         })
         .onClick((event: ClickEvent) => {
           console.log('add button is clicked')
+          this.getUIContext()
+            .getPromptAction()
+            .openCustomDialog({
+              builder: () => {
+                this.dialogComponent()
+                // AddTodoDialog() NOTE Error
+              },
+              isModal: true,
+              // maskColor: Color.Yellow,
+            })
+            .then((dialogId: number) => {
+              this.dialogComponentId = dialogId
+            })
+            .catch((err: BusinessError) => {
+              console.error(`openCustomDialog error: ${err.message}`)
+            })
         })
       }
     }
