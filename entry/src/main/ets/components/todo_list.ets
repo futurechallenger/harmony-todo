@@ -3,13 +3,10 @@ import { Todo } from '../models/Todo';
 @ComponentV2
 export struct TodoList {
   // @Consumer('navPathStack') navPathStack: NavPathStack = new NavPathStack()
+  @Require @Param todos: Array<Todo> = [];
   @Require @Param navPathStack: NavPathStack = new NavPathStack()
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
   }
-  private todos: Array<Todo> = [
-    new Todo(1, 'todo 1', 'todo 1 description', false),
-    new Todo(2, 'todo 2', 'todo 2 description', false),
-  ]
 
   build() {
     Column() {

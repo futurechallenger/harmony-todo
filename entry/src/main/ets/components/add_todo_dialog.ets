@@ -37,38 +37,65 @@ function ButtonTitle(title: string) {
     .textAlign(TextAlign.Center)
 }
 
-@Builder
-export function AddTodoDialog() {
-  Column() {
-    Text('Title').fontColor(Color.Gray)
-    TextInput({ placeholder: 'Enter title please' })
-    Text('Description').fontColor(Color.Gray)
+@ComponentV2
+export struct AddTodoDialog {
+  inputController: TextInputController = new TextInputController()
+  descController: TextAreaController = new TextAreaController()
+  @Local titleText: string = ''
+  @Local descText: string = ''
+  @Require @Param onClose?: () => void
+  @Event onAddTodo?: (title: string, desc: string) => void
+
+  build() {
+    Column() {
+      Text('Title').fontColor(Color.Gray)
+      TextInput({ placeholder: 'Enter title please', controller: this.inputController })
+        .onChange((text) => {
+          this.titleText = text
+          console.log('text', text)
+        })
+
+      Text('Description').fontColor(Color.Gray)
+        .margin({ top: 12 })
+      TextArea({ placeholder: 'Enter description please', controller: this.descController })
+        .maxLines(3)
+        .minLines(3)
+        .onChange((text) => {
+          this.descText = text
+          console.log('desc text', text)
+        })
+
+      Row() {
+        Button() {
+          ButtonTitle('Cancel')
+        }
+        .onClick(() => {
+          this.onClose?.()
+        })
+
+        Column() {
+        }.width(20)
+
+        Button() {
+          ButtonTitle('OK')
+        }
+        .onClick(() => {
+          this.onAddTodo?.(this.titleText, this.descText)
+          this.onClose?.()
+        })
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Center)
+      .alignItems(VerticalAlign.Center)
       .margin({ top: 12 })
-    TextInput({ placeholder: 'Enter description please' })
-
-    Row() {
-      Button() {
-        ButtonTitle('Cancel')
-      }
-
-      Column() {
-      }.width(20)
-
-      Button() {
-        ButtonTitle('OK')
-      }
     }
-    .width('100%')
-    .justifyContent(FlexAlign.Center)
-    .alignItems(VerticalAlign.Center)
-    .margin({ top: 12 })
+    .padding({
+      left: 20,
+      right: 20,
+      top: 16,
+      bottom: 16
+    })
+    .justifyContent(FlexAlign.Start)
+    .alignItems(HorizontalAlign.Start)
   }
-  .padding({
-    left: 20,
-    right: 20,
-    top: 16,
-    bottom: 16
-  })
-  .justifyContent(FlexAlign.Start)
-  .alignItems(HorizontalAlign.Start)
 }
