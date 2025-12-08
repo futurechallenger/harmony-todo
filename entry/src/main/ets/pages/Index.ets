@@ -3,11 +3,16 @@ import { SettingsComponent } from '../components/settings_component'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
+import { Todo } from '../models/Todo';
 
 @Entry
 @ComponentV2
 struct Index {
   private dialogComponentId: number = -1
+  @Local todos: Array<Todo> = [
+    new Todo(1, 'todo 1', 'todo 1 description', false),
+    new Todo(2, 'todo 2', 'todo 2 description', false),
+  ]
   // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
@@ -27,7 +32,16 @@ struct Index {
 
   @Builder
   dialogComponent() {
-    AddTodoDialog()
+
+    // @Event onAddTodo?: (title: string, desc: string) => void
+    AddTodoDialog({
+      onAddTodo: (title: string, desc: string) => {
+        this.todos.push(new Todo(this.todos.length + 1, title, desc, false))
+      },
+      onClose: () => {
+        this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
+      }
+    })
   }
 
   @Builder
@@ -44,6 +58,7 @@ struct Index {
           Tabs({ barPosition: BarPosition.End }) {
             TabContent() {
               TodoList({
+                todos: this.todos,
                 navPathStack: this.navPathStack,
                 isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow
               })
