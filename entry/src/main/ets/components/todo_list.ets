@@ -26,7 +26,7 @@ export struct TodoList {
                   .height(24)
                   .onClick(() => {
                     this.isShowFloatingButton(false)
-                    this.navPathStack.pushPathByName('detail', item.getID())
+                    this.navPathStack.pushPathByName('detail', item)
                   })
               }
               .width('100%')
@@ -38,12 +38,10 @@ export struct TodoList {
                 top: 10,
                 bottom: 10
               })
-              .backgroundColor(Color.Yellow)
 
               Divider()
             }
             .alignItems(HorizontalAlign.Start)
-            .backgroundColor(Color.Red)
           }
         })
       }
