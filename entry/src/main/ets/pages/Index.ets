@@ -1,9 +1,11 @@
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { TodoService } from '../services/TodoService'
 import { SettingsComponent } from '../components/settings_component'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
 import { Todo } from '../models/Todo';
+import { deviceInfo } from '@kit.BasicServicesKit';
 
 @Entry
 @ComponentV2
@@ -18,6 +20,8 @@ struct Index {
   @Local showFloatingButton: boolean = true
 
   aboutToAppear(): void {
+    console.log('=========Home page starting============')
+
     this.navPathStack.setInterception({
       willShow: (from: NavDestinationContext | "navBar", to: NavDestinationContext | "navBar",
         operation: NavigationOperation, animated: boolean) => {
@@ -36,7 +40,8 @@ struct Index {
     // @Event onAddTodo?: (title: string, desc: string) => void
     AddTodoDialog({
       onAddTodo: (title: string, desc: string) => {
-        this.todos.push(new Todo(this.todos.length + 1, title, desc, false))
+        const todoService = new TodoService()
+        todoService.createTodo(title, desc)
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
@@ -58,7 +63,6 @@ struct Index {
           Tabs({ barPosition: BarPosition.End }) {
             TabContent() {
               TodoList({
-                todos: this.todos,
                 navPathStack: this.navPathStack,
                 isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow
               })

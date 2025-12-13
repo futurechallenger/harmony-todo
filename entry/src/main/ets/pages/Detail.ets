@@ -1,4 +1,5 @@
 import { Todo } from '../models/Todo'
+import { DatabaseFactory } from '../database/DatabaseFactory'
 
 @Preview
 @ComponentV2
@@ -8,6 +9,18 @@ export struct Detail {
 
   aboutToAppear(): void {
     this.highlightStatus = this.todo?.getCompleted() ? 1 : 0
+  }
+
+  private async updateTodoStatus(completed: boolean): Promise<void> {
+    if (this.todo) {
+      try {
+        const database = DatabaseFactory.getDatabase()
+        // await database.update(this.todo.getID(), this.todo.getTitle(), this.todo.getDescription(), completed)
+        console.log(`Updated todo ${this.todo.getID()} to completed: ${completed}`)
+      } catch (error) {
+        console.error('Error updating todo:', error)
+      }
+    }
   }
 
   build() {
@@ -31,6 +44,7 @@ export struct Detail {
           .onClick(() => {
             console.log('In Progress')
             this.highlightStatus = 0;
+            this.updateTodoStatus(false)
           })
           .height('100%')
 
@@ -46,6 +60,7 @@ export struct Detail {
           .onClick(() => {
             console.log('Completed')
             this.highlightStatus = 1;
+            this.updateTodoStatus(true)
           })
           .height('100%')
         }
