@@ -1,11 +1,35 @@
 import { Todo } from '../models/Todo';
+import { DatabaseFactory } from '../database/DatabaseFactory';
+import { TodoService } from '../services/TodoService';
 
 @ComponentV2
 export struct TodoList {
   // @Consumer('navPathStack') navPathStack: NavPathStack = new NavPathStack()
-  @Require @Param todos: Array<Todo> = [];
   @Require @Param navPathStack: NavPathStack = new NavPathStack()
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
+  }
+  @Local todos: Array<Todo> = []
+  private todoService = TodoService.getInstance()
+
+  aboutToAppear(): void {
+    this.loadTodos()
+  }
+
+  private async loadTodos(): Promise<void> {
+    try {
+      this.todos = await this.todoService.getAllTodos()
+    } catch (error) {
+      console.error('Error loading todos:', error)
+    }
+  }
+
+  private async deleteTodo(id: number): Promise<void> {
+    try {
+      await this.todoService.deleteTodo(id)
+      await this.loadTodos()
+    } catch (error) {
+      console.error('Error deleting todo:', error)
+    }
   }
 
   build() {

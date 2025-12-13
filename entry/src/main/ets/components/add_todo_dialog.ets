@@ -80,6 +80,7 @@ export struct AddTodoDialog {
           ButtonTitle('OK')
         }
         .onClick(() => {
+          console.log('>>>>Add todo dialog: ')
           this.onAddTodo?.(this.titleText, this.descText)
           this.onClose?.()
         })
