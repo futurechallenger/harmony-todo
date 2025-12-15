@@ -1,4 +1,4 @@
-import { Todo } from "../models/Todo";
+import { TodoInfo as Todo } from "../models/TodoInfo";
 
 export interface Database {
   create(id: number, title: string, description: string, completed: boolean): Promise<void>

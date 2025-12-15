@@ -1,10 +1,10 @@
-import { Todo } from '../models/Todo'
+import { TodoInfo } from '../models/TodoInfo'
 import { DatabaseFactory } from '../database/DatabaseFactory'
 
 @Preview
 @ComponentV2
 export struct Detail {
-  @Local todo?: Todo
+  @Local todo?: TodoInfo
   @Local highlightStatus: number = -1
 
   aboutToAppear(): void {
@@ -88,9 +88,11 @@ export struct Detail {
     }
     .title("Detail")
     .onReady((context: NavDestinationContext) => {
-      const params = context.pathInfo.param as Todo;
+      const params = context.pathInfo.param as TodoInfo;
       console.log('Nav params > ', params?.getTitle())
-      this.todo = new Todo(params.getID(), params.getTitle(), params.getDescription(), params.getCompleted())
+      const newTodo = new TodoInfo();
+      newTodo.init(params.getID() || 0, params.getTitle(), params.getDescription(),!params.getCompleted() ? 0 : 1)
+      this.todo = newTodo
     })
   }
 }

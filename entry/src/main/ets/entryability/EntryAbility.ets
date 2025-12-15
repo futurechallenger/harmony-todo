@@ -6,11 +6,11 @@ import { DatabaseFactory } from '../database/DatabaseFactory';
 const DOMAIN = 0x0000;
 
 export default class EntryAbility extends UIAbility {
-  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+  async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     try {
       // this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
       console.log('==========EntryAbility starting=========')
-      DatabaseFactory.init(this.context.getApplicationContext());
+      // await DatabaseFactory.init(this.context.getApplicationContext());
     } catch (err) {
       hilog.error(DOMAIN, 'testTag', 'Failed to set colorMode. Cause: %{public}s', JSON.stringify(err));
     }

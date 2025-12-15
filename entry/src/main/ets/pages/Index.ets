@@ -4,23 +4,24 @@ import { SettingsComponent } from '../components/settings_component'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
-import { Todo } from '../models/Todo';
+import { TodoInfo } from '../models/TodoInfo';
+import { DBUtils } from '../libs/DBUtils'
 import { deviceInfo } from '@kit.BasicServicesKit';
 
 @Entry
 @ComponentV2
 struct Index {
   private dialogComponentId: number = -1
-  @Local todos: Array<Todo> = [
-    new Todo(1, 'todo 1', 'todo 1 description', false),
-    new Todo(2, 'todo 2', 'todo 2 description', false),
-  ]
+  private dbUtils: DBUtils = new DBUtils(this.getUIContext())
   // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
+  @Local todoList: TodoInfo[] = []
+  @Provider('refreshTodoList') refreshTodoList: string = '';
 
   aboutToAppear(): void {
     console.log('=========Home page starting============')
+    this.dbUtils.createDB()
 
     this.navPathStack.setInterception({
       willShow: (from: NavDestinationContext | "navBar", to: NavDestinationContext | "navBar",
@@ -34,14 +35,19 @@ struct Index {
     })
   }
 
+  async onDidBuild() {
+    console.log('=========Home page did build============')
+    const ret = await this.dbUtils.queryData()
+    this.todoList = ret || []
+  }
+
   @Builder
   dialogComponent() {
-
-    // @Event onAddTodo?: (title: string, desc: string) => void
     AddTodoDialog({
-      onAddTodo: (title: string, desc: string) => {
-        const todoService = new TodoService()
-        todoService.createTodo(title, desc)
+      onAddTodo: async (title: string, desc: string) => {
+        await this.dbUtils.insertData(title, desc)
+        this.todoList = await this.dbUtils.queryData()
+        this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
@@ -64,6 +70,7 @@ struct Index {
             TabContent() {
               TodoList({
                 navPathStack: this.navPathStack,
+                todos: this.todoList,
                 isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow
               })
             }
