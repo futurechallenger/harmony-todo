@@ -1,5 +1,4 @@
 import { TodoInfo } from '../models/TodoInfo'
-import { DatabaseFactory } from '../database/DatabaseFactory'
 
 @Preview
 @ComponentV2
@@ -14,7 +13,6 @@ export struct Detail {
   private async updateTodoStatus(completed: boolean): Promise<void> {
     if (this.todo) {
       try {
-        const database = DatabaseFactory.getDatabase()
         // await database.update(this.todo.getID(), this.todo.getTitle(), this.todo.getDescription(), completed)
         console.log(`Updated todo ${this.todo.getID()} to completed: ${completed}`)
       } catch (error) {

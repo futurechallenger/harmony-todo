@@ -1,12 +1,9 @@
-import { hilog } from '@kit.PerformanceAnalysisKit';
-import { TodoService } from '../services/TodoService'
 import { SettingsComponent } from '../components/settings_component'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
 import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
-import { deviceInfo } from '@kit.BasicServicesKit';
 
 @Entry
 @ComponentV2
