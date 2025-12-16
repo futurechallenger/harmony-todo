@@ -1,8 +1,5 @@
 import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
-import { DatabaseFactory } from '../database/DatabaseFactory';
-
-// import { TodoService } from '../services/TodoService';
 
 @ComponentV2
 export struct TodoList {
@@ -23,29 +20,6 @@ export struct TodoList {
     console.log('======todo list onDidBuild', this.refreshTodoList)
     // this.loadTodos()
   }
-
-  // private async loadTodos(): Promise<void> {
-  //   try {
-  //     console.log('===load todos')
-  //
-  //     // const todos = await this.todoService.getAllTodos()
-  //     const todos = await this.dbUtils.queryData();
-  //     this.todos = todos;
-  //
-  //     console.log('===load todos done', this.todos)
-  //   } catch (error) {
-  //     console.error('Error loading todos:', error)
-  //   }
-  // }
-
-  // private async deleteTodo(id: number): Promise<void> {
-  //   try {
-  //     // await this.todoService.deleteTodo(id)
-  //     await this.loadTodos()
-  //   } catch (error) {
-  //     console.error('Error deleting todo:', error)
-  //   }
-  // }
 
   build() {
     Column() {
