@@ -20,7 +20,7 @@ export class TodoInfo {
     this.completed = completed;
   }
 
-  public getID(): number|undefined {
+  public getID(): number | undefined {
     return this.id;
   }
 

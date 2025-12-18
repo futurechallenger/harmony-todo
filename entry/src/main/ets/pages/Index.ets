@@ -1,9 +1,15 @@
 import { SettingsComponent } from '../components/settings_component'
+import { Settings } from '../models/Settings'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
 import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
+import { PersistenceV2 } from '@kit.ArkUI';
+
+/**
+ * TODO: Use @ObservedV2 to crate view models
+ */
 
 @Entry
 @ComponentV2
@@ -11,6 +17,7 @@ struct Index {
   private dialogComponentId: number = -1
   private dbUtils: DBUtils = new DBUtils(this.getUIContext())
   // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
+
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
   @Local todoList: TodoInfo[] = []

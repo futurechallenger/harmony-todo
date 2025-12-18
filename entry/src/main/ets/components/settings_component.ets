@@ -1,41 +1,54 @@
-import { TodoList } from "./todo_list";
-import { DBUtils } from '../libs/DBUtils'
+import { CapsuleSegmentButtonV2, PersistenceV2, SegmentButton, SegmentButtonV2Items } from '@kit.ArkUI'
 import { TodoInfo } from '../models/TodoInfo'
+import { Settings } from '../models/Settings'
 
+@Preview
 @ComponentV2
 export struct SettingsComponent {
-  private dbUtils: DBUtils = new DBUtils(this.getUIContext())
-  // 固定数组数据
   private settingsItems: string[] = ['settings 1', 'settings 2'];
   @Local todoList: TodoInfo[] = [];
+  @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
+  @Local selectedIndex: number = 0
 
   async aboutToAppear() {
-    this.todoList = await this.dbUtils.queryData()
+    // this.settings.
   }
 
   build() {
     Column() {
       List() {
-        ForEach(this.todoList, (item: TodoInfo) => {
-          ListItem() {
-            Row() {
-              Text(item.getTitle())
-                .fontSize(16)
-                .fontColor(Color.Black)
-            }
-            .width('100%')
-            .padding(16)
-            .backgroundColor(Color.White)
-            .borderRadius(8)
-            .margin({ bottom: 8 })
+        ListItem() {
+          Column() {
+            Text('Font size')
+              .fontSize(14)
+              .fontColor(Color.Gray)
+
+            CapsuleSegmentButtonV2({
+              items: new SegmentButtonV2Items([
+                { text: "Small" },
+                { text: "Medium" },
+                { text: "large" },
+              ]),
+              selectedIndex: this.selectedIndex,
+              $selectedIndex: (index: number) => {
+                this.selectedIndex = index
+                this.settings.fontSize = index === 0 ? 'small' : index === 1 ? 'medium' : 'large'
+              }
+            })
+              .margin({ top: 10 })
           }
-        })
+          .width('100%')
+          .padding(16)
+          .backgroundColor(Color.White)
+          .borderRadius(8)
+          .margin({ bottom: 8 })
+          .alignItems(HorizontalAlign.Start)
+        }
       }
       .width('100%')
       .height('100%')
       .padding(16)
       .backgroundColor('#F5F5F5')
-
     }
   }
 }
