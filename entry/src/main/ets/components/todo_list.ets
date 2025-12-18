@@ -1,5 +1,7 @@
 import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
+import { Settings } from '../models/Settings'
+import { PersistenceV2 } from '@kit.ArkUI'
 
 @ComponentV2
 export struct TodoList {
@@ -10,6 +12,7 @@ export struct TodoList {
   }
   @Param todos: Array<TodoInfo> = []
   @Consumer('refreshTodoList') refreshTodoList: string = ''
+  @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
 
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
@@ -26,13 +29,17 @@ export struct TodoList {
       Text(this.refreshTodoList)
 
       List() {
-        ForEach(this.todos, (item: TodoInfo) => {
+        ForEach(this.todos, (item: TodoInfo) => { // TODO: use Repeat later
           ListItem() {
             Column() {
               Row() {
                 Column() {
                   Text(item.getTitle())
+                    .fontWeight(FontWeight.Bold)
+                    .fontSize(this.settings.fontSize === 'small' ? 16 : this.settings.fontSize === 'medium' ? 22 : 30)
                   Text(item.getDescription())
+                    .fontColor(Color.Gray)
+                    .fontSize(this.settings.fontSize === 'small' ? 14 : this.settings.fontSize === 'medium' ? 20 : 28)
                 }
                 .alignItems(HorizontalAlign.Start)
 
