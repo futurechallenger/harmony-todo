@@ -10,8 +10,15 @@ export struct SettingsComponent {
   @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
   @Local selectedIndex: number = 0
 
-  async aboutToAppear() {
+  aboutToAppear() {
     // this.settings.
+    console.log('===>>>SETTINGS aboutToAppear', this.settings.fontSize)
+    this.selectedIndex = this.settings.fontSize === 'small' ? 0 : this.settings.fontSize === 'medium' ? 1 : 2
+    console.log('===>>>SETTINGS aboutToAppear', this.selectedIndex)
+  }
+
+  onDidBuild(): void {
+    console.log('===>>>SETTINGS onDidBuild', this.settings.fontSize)
   }
 
   build() {
@@ -29,7 +36,7 @@ export struct SettingsComponent {
                 { text: "Medium" },
                 { text: "large" },
               ]),
-              selectedIndex: this.selectedIndex,
+              selectedIndex: this.selectedIndex, //  this.settings.fontSize === 'small' ? 0 : this.settings.fontSize === 'medium' ? 1 : 2,
               $selectedIndex: (index: number) => {
                 this.selectedIndex = index
                 this.settings.fontSize = index === 0 ? 'small' : index === 1 ? 'medium' : 'large'
