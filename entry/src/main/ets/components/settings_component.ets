@@ -11,10 +11,7 @@ export struct SettingsComponent {
   @Local selectedIndex: number = 0
 
   aboutToAppear() {
-    // this.settings.
-    console.log('===>>>SETTINGS aboutToAppear', this.settings.fontSize)
     this.selectedIndex = this.settings.fontSize === 'small' ? 0 : this.settings.fontSize === 'medium' ? 1 : 2
-    console.log('===>>>SETTINGS aboutToAppear', this.selectedIndex)
   }
 
   onDidBuild(): void {
