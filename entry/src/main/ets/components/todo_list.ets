@@ -6,7 +6,6 @@ import { PersistenceV2 } from '@kit.ArkUI'
 @ComponentV2
 export struct TodoList {
   private dbUtils = new DBUtils(this.getUIContext())
-  // @Consumer('navPathStack') navPathStack: NavPathStack = new NavPathStack()
   @Require @Param navPathStack: NavPathStack = new NavPathStack()
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
   }
@@ -16,12 +15,10 @@ export struct TodoList {
 
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
-    // await this.loadTodos()
   }
 
   onDidBuild(): void {
     console.log('======todo list onDidBuild', this.refreshTodoList)
-    // this.loadTodos()
   }
 
   build() {

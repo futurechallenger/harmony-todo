@@ -1,26 +1,3 @@
-// @Preview
-// @ComponentV2
-// export struct AddTodoDialog {
-//   build() {
-//     Column() {
-//       Text('Title')
-//       TextInput({ placeholder: '请输入标题' })
-//       Text('Title')
-//       TextInput({ placeholder: '请输入标题' })
-//
-//       Row() {
-//         Button() {
-//           Text('Cancel')
-//         }
-//
-//         Button() {
-//           Text('OK')
-//         }
-//       }
-//     }
-//   }
-// }
-
 @Builder
 function ButtonTitle(title: string) {
   Text(title)
