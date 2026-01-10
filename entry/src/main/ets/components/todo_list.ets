@@ -3,6 +3,12 @@ import { DBUtils } from '../libs/DBUtils'
 import { Settings } from '../models/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
 
+/*
+ * TODO:
+ * 1. 长按删除
+ * 2. Swipe action
+ * 3. 使用多机协同，下拉刷新来同步多个机器的数据
+ */
 @ComponentV2
 export struct TodoList {
   private dbUtils = new DBUtils(this.getUIContext())
@@ -33,9 +39,10 @@ export struct TodoList {
                 Column() {
                   Text(item.getTitle())
                     .fontWeight(FontWeight.Bold)
+                    .fontColor($r('app.color.title_color'))
                     .fontSize(this.settings.fontSize === 'small' ? 16 : this.settings.fontSize === 'medium' ? 22 : 30)
                   Text(item.getDescription())
-                    .fontColor(Color.Gray)
+                    .fontColor($r('app.color.text_color'))
                     .fontSize(this.settings.fontSize === 'small' ? 14 : this.settings.fontSize === 'medium' ? 20 : 28)
                 }
                 .alignItems(HorizontalAlign.Start)
