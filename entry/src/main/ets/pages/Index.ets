@@ -5,7 +5,9 @@ import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
 import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
-import { PersistenceV2 } from '@kit.ArkUI';
+import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
+import { ThemeModel } from '../models/ThemeModel';
+import { ConfigurationConstant } from '@kit.AbilityKit';
 
 /**
  * TODO: Use @ObservedV2 to crate view models
@@ -16,16 +18,47 @@ import { PersistenceV2 } from '@kit.ArkUI';
 struct Index {
   private dialogComponentId: number = -1
   private dbUtils: DBUtils = new DBUtils(this.getUIContext())
+  private currentWindow: window.Window | undefined = undefined
   // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
 
+  @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme')
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
   @Local todoList: TodoInfo[] = []
   @Provider('refreshTodoList') refreshTodoList: string = '';
 
+  @Monitor('appTheme.currentColorMode')
+  onAppThemeChange(monitor: IMonitor) {
+    console.log('>>>>>>>>===>>>monitor of color mode', JSON.stringify(monitor.value()?.now));
+    const colorMode = monitor.value()?.now as ConfigurationConstant.ColorMode | undefined
+    if (colorMode === void 0 || !this.currentWindow || !this.appTheme) {
+      return;
+    }
+
+    if (this.appTheme.currentColorMode === ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT) {
+      this.currentWindow?.setWindowSystemBarProperties({
+        statusBarContentColor: '#E74646'
+      }).catch(() => {
+        // TODO: Implement error handling.
+        console.log('==>>>light theme error')
+      })
+    } else if (this.appTheme.currentColorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK) {
+      this.currentWindow?.setWindowSystemBarProperties({
+        statusBarContentColor: '#B2F297'
+      }).catch(() => {
+        // TODO:
+        console.log('==>>>dark theme error')
+      })
+    }
+  }
+
   aboutToAppear(): void {
     console.log('=========Home page starting============')
     this.dbUtils.createDB()
+
+    window.getLastWindow(this.getUIContext().getHostContext(), (err: BusinessError, data) => {
+      this.currentWindow = data
+    })
 
     this.navPathStack.setInterception({
       willShow: (from: NavDestinationContext | "navBar", to: NavDestinationContext | "navBar",

@@ -70,3 +70,4 @@ export class CommonConstants {
    */
   static readonly INIT_NAME: string = 'developer1';
 }
+
