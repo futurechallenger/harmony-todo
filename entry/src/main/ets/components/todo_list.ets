@@ -2,6 +2,7 @@ import { TodoInfo } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
 import { Settings } from '../models/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
+import axios, { AxiosResponse } from '@ohos/axios';
 
 /*
  * TODO:
@@ -21,6 +22,8 @@ export struct TodoList {
 
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
+    const ret: AxiosResponse = await axios.get('http://localhost:17788/list/all')
+    console.log('======todo list aboutToAppear', ret.statusText)
   }
 
   onDidBuild(): void {

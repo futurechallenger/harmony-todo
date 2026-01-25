@@ -26,6 +26,11 @@ export struct SettingsComponent {
             Text('Font size')
               .fontSize(14)
               .fontColor(Color.Gray)
+              .gesture(
+                TapGesture().onAction(() => {
+                  console.log('===>>>SETTINGS Text Tap gesture onAction')
+                })
+              )
 
             CapsuleSegmentButtonV2({
               items: new SegmentButtonV2Items([
@@ -41,6 +46,9 @@ export struct SettingsComponent {
             })
               .margin({ top: 10 })
           }
+          .gesture(TapGesture().onAction(() => {
+            console.log('===>>>SETTINGS Column Tap gesture onAction', this.selectedIndex)
+          }))
           .width('100%')
           .padding(16)
           .backgroundColor(Color.White)

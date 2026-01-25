@@ -2,7 +2,8 @@
   "modelVersion": "6.0.1",
   "description": "Please describe the basic information.",
   "dependencies": {
-    "@iakii/icons": "^1.0.0"
+    "@iakii/icons": "^1.0.0",
+    "@ohos/axios": "latest"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.24",
