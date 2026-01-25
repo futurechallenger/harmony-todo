@@ -20,7 +20,8 @@ export class CommonConstants {
   /**
    * SQL statement for creating a todo table.
    */
-  static readonly SQL_CREATE_TODO_TABLE: string = 'CREATE TABLE IF NOT EXISTS todo_info (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, completed INTEGER)';
+  static readonly SQL_CREATE_TODO_TABLE: string =
+    'CREATE TABLE IF NOT EXISTS todo_info (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, completed INTEGER, deleted INTEGER, version INTEGER)';
   /**
    * SQL statement for initializing todo tables.
    */

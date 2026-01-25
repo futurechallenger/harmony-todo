@@ -1,3 +1,5 @@
+import axios, { AxiosError, AxiosResponse } from '@ohos/axios';
+import { request } from '../libs/create_request';
 import { SettingsComponent } from '../components/settings_component'
 import { Settings } from '../models/Settings'
 import { TodoList } from '../components/todo_list';
@@ -8,6 +10,12 @@ import { DBUtils } from '../libs/DBUtils'
 import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
 import { ThemeModel } from '../models/ThemeModel';
 import { ConfigurationConstant } from '@kit.AbilityKit';
+
+
+interface Res {
+  code: number,
+  msg: string
+}
 
 /**
  * TODO: Use @ObservedV2 to crate view models
@@ -74,17 +82,29 @@ struct Index {
 
   async onDidBuild() {
     console.log('=========Home page did build============')
-    const ret = await this.dbUtils.queryData()
-    this.todoList = ret || []
+    // const ret = await this.dbUtils.queryData()
+    // this.todoList = ret || []
+    try {
+      const todos: TodoInfo[] | null =
+        await request.get<TodoInfo[] | null>({ url: '/list/all' })
+      console.log('===>>>todos', todos);
+    } catch (error) {
+      console.error('===>>>request error', error);
+    }
+
+    // this.todoList = todos || [];
   }
 
   @Builder
   dialogComponent() {
     AddTodoDialog({
       onAddTodo: async (title: string, desc: string) => {
-        await this.dbUtils.insertData(title, desc)
-        this.todoList = await this.dbUtils.queryData()
-        this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
+        // await this.dbUtils.insertData(title, desc)
+        // this.todoList = await this.dbUtils.queryData()
+        // this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
+
+        // const todos: TodoInfo[] | null = await request.get<TodoInfo[] | null>({ url: "/list/all" })
+        // console.log('===>>>todos', todos);
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
