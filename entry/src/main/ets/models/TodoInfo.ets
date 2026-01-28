@@ -1,23 +1,36 @@
 import { CommonConstants } from '../libs/Constants'
 
+export interface TodoInfoType {
+  id: number
+  title: string
+  description: string
+  completed: number
+  version: number;
+}
+
 export class TodoInfo {
   private id?: number
   private title: string
   private description: string
   private completed: number
+  private version: number;
 
   constructor() {
     this.id = undefined;
     this.title = CommonConstants.EMPTY_STRING;
     this.description = CommonConstants.EMPTY_STRING;
     this.completed = 0;
+    this.version = 0;
   }
 
-  init(id: number, title: string, description: string, completed: number) {
+  init(id: number, title: string, description: string, completed: number, version: number) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.completed = completed;
+    this.version = version;
+
+    return this;
   }
 
   public getID(): number | undefined {
@@ -54,5 +67,13 @@ export class TodoInfo {
     } else {
       this.completed = !completed ? 0 : 1;
     }
+  }
+
+  public getVersion(): number {
+    return this.version;
+  }
+
+  public setVersion(version: number) {
+    this.version = version;
   }
 }

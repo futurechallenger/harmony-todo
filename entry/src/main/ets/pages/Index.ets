@@ -1,11 +1,11 @@
 import axios, { AxiosError, AxiosResponse } from '@ohos/axios';
-import { request } from '../libs/create_request';
+import { request, ResponseData } from '../libs/create_request';
 import { SettingsComponent } from '../components/settings_component'
 import { Settings } from '../models/Settings'
 import { TodoList } from '../components/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../components/add_todo_dialog';
-import { TodoInfo } from '../models/TodoInfo';
+import { TodoInfo, TodoInfoType } from '../models/TodoInfo';
 import { DBUtils } from '../libs/DBUtils'
 import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
 import { ThemeModel } from '../models/ThemeModel';
@@ -82,17 +82,21 @@ struct Index {
 
   async onDidBuild() {
     console.log('=========Home page did build============')
-    // const ret = await this.dbUtils.queryData()
-    // this.todoList = ret || []
+    // NOTE: deal with sqlite `const ret = await this.dbUtils.queryData()`
     try {
-      const todos: TodoInfo[] | null =
-        await request.get<TodoInfo[] | null>({ url: '/list/all' })
+      const response: AxiosResponse<ResponseData<TodoInfoType[] | null>> =
+        await axios.get<ResponseData<TodoInfoType[] | null>, AxiosResponse<ResponseData<TodoInfoType[] | null>>, null>('http://192.168.31.109:17788/list/all')
+      const todos: TodoInfo[] = [] as TodoInfo[]
+      (response.data?.data || [] as TodoInfoType[]).forEach((item: TodoInfoType) => {
+        const todo = new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
+        todos.push(todo)
+      })
       console.log('===>>>todos', todos);
+
+      this.todoList = todos || []
     } catch (error) {
       console.error('===>>>request error', error);
     }
-
-    // this.todoList = todos || [];
   }
 
   @Builder
