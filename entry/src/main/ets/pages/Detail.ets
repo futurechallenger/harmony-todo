@@ -9,15 +9,11 @@ export struct Detail {
   @Local todoId: number = 0
   @Local todo?: TodoInfo
   @Local highlightStatus: number = -1
-  @Local stack: NavPathStack = new NavPathStack();
 
   aboutToAppear(): void {
     this.highlightStatus = this.todo?.getCompleted() ? 1 : 0
 
-    const params: TodoInfo = this.stack.getParamByName('detail')?.[0] as TodoInfo;
-
     console.log('> todo detail > aboutToAppear, todo ID: ', this.todoId)
-    console.log('> todo detail > aboutToAppear, todo params: ', JSON.stringify(params))
   }
 
   onDidBuild(): void {
