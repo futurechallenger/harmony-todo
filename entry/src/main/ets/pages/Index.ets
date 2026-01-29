@@ -91,7 +91,7 @@ struct Index {
         const todo = new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
         todos.push(todo)
       })
-      console.log('===>>>todos', todos);
+      console.log('===>>>todos', JSON.stringify(todos));
 
       this.todoList = todos || []
     } catch (error) {
