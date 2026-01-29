@@ -3,11 +3,14 @@ import { TodoInfo } from '../models/TodoInfo'
 @Preview
 @ComponentV2
 export struct Detail {
+  @Local todoId: number = 0
   @Local todo?: TodoInfo
   @Local highlightStatus: number = -1
 
   aboutToAppear(): void {
     this.highlightStatus = this.todo?.getCompleted() ? 1 : 0
+
+    console.log('> todo detail > aboutToAppear, todo ID: ', this.todoId)
   }
 
   private async updateTodoStatus(completed: boolean): Promise<void> {
@@ -88,9 +91,10 @@ export struct Detail {
     .onReady((context: NavDestinationContext) => {
       const params = context.pathInfo.param as TodoInfo;
       console.log('Nav params > ', params?.getTitle())
-      const newTodo = new TodoInfo();
-      newTodo.init(params.getID() || 0, params.getTitle(), params.getDescription(),!params.getCompleted() ? 0 : 1)
-      this.todo = newTodo
+      // const newTodo = new TodoInfo();
+      // newTodo.init(params.getID() || 0, params.getTitle(), params.getDescription(),!params.getCompleted() ? 0 : 1, params.getVersion())
+      // this.todo = newTodo
+      this.todoId = params?.getID() || 0
     })
   }
 }

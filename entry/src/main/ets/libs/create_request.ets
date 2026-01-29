@@ -6,6 +6,13 @@ import axios, {
   AxiosError
 } from '@ohos/axios';
 import { promptAction } from '@kit.ArkUI'; // 用于显示提示信息
+import { TodoInfo, TodoInfoType } from '../models/TodoInfo';
+
+export interface ResponseData<T> {
+  code?: number;
+  message: string;
+  data: T;
+}
 
 class Request {
   instance: AxiosInstance;
@@ -29,7 +36,23 @@ class Request {
     // 响应拦截器
     this.instance.interceptors.response.use((response: AxiosResponse) => {
       // 对响应数据做些处理，例如根据自定义业务代码判断成功与否
-      const msg: string = response.data?.msg
+      const msg: string = response.data?.message;
+      if (msg !== 'ok') {
+        throw new Error(msg)
+      }
+
+      const url = response.config.url
+      console.log('==>>response url', url);
+      if (url === '/list/all') {
+
+        let ret: Array<TodoInfo> = new Array<TodoInfo>();
+
+        ret = response.data?.data.map((item: TodoInfoType): TodoInfo => {
+          return new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
+        });
+      }
+      else  if(url === '')
+
       return response.data?.data; // 直接返回有用的数据部分
 
       // TODO: deal with server code later
@@ -45,19 +68,19 @@ class Request {
   }
 
   // 封装请求方法
-  request<T>(config: AxiosRequestConfig): Promise<T> {
-    return this.instance.request(config);
-  }
-
-  get<T>(config: AxiosRequestConfig = {}): Promise<T> {
-    config.method = 'GET'
-    return this.request(config);
-  }
-
-  post<T>(config: AxiosRequestConfig = {}): Promise<T> {
-    config.method = 'POST'
-    return this.request(config);
-  }
+  // request<T>(config: AxiosRequestConfig): Promise<T> {
+  //   return this.instance.request<T, AxiosResponse<T>>(config);
+  // }
+  //
+  // get<T>(config: AxiosRequestConfig = {}): Promise<T> {
+  //   config.method = 'GET'
+  //   return this.request<T>(config);
+  // }
+  //
+  // post<T>(config: AxiosRequestConfig = {}): Promise<T> {
+  //   config.method = 'POST'
+  //   return this.request<T>(config);
+  // }
 }
 
 // 导出配置好的实例

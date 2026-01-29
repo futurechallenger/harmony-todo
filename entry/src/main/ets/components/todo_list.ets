@@ -22,8 +22,8 @@ export struct TodoList {
 
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
-    const ret: AxiosResponse = await axios.get('http://localhost:17788/list/all')
-    console.log('======todo list aboutToAppear', ret.statusText)
+    // const ret: AxiosResponse = await axios.get('http://localhost:17788/list/all')
+    console.log('======todo list aboutToAppear', this.todos)
   }
 
   onDidBuild(): void {
