@@ -15,6 +15,10 @@
     {
       "name": "approximately_location_reason",
       "value": "reason"
+    },
+    {
+      "name": "request_network_info",
+      "value": "request network info premission"
     }
   ]
 }
