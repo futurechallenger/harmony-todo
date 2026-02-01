@@ -10,7 +10,11 @@ import { DBUtils } from '../libs/DBUtils'
 import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
 import { ThemeModel } from '../models/ThemeModel';
 import { ConfigurationConstant } from '@kit.AbilityKit';
+import { ConnectionStatus } from '../models/ConnectionStatus';
+import { connection } from '@kit.NetworkKit'
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
+const DOMAIN = 0x0000
 
 interface Res {
   code: number,
@@ -77,6 +81,28 @@ struct Index {
           this.showFloatingButton = true
         }
       }
+    })
+
+
+    let netSpecifier: connection.NetSpecifier = {
+      netCapabilities: {
+        bearerTypes: [connection.NetBearType.BEARER_CELLULAR, connection.NetBearType.BEARER_WIFI],
+        networkCap: [connection.NetCap.NET_CAPABILITY_INTERNET]
+      }
+    }
+
+    let conn = connection.createNetConnection(netSpecifier, 10)
+
+    conn.on('netAvailable', (data: connection.NetHandle) => {
+      hilog.info(DOMAIN, 'connection status', `Succeeded in connecting, data is ${JSON.stringify(data)}`);
+    });
+    conn.on('netUnavailable', (data: void) => {
+      hilog.info(DOMAIN, 'connection status', `network unavailable, data is ${JSON.stringify(data)}`)
+    })
+
+    conn.register((err: BusinessError, data: void) => {
+      hilog.info(DOMAIN, 'connection status',
+        `register result, err is ${JSON.stringify(err)}, data is ${JSON.stringify(data)}`)
     })
   }
 
