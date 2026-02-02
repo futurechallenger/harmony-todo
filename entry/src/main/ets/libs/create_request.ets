@@ -14,6 +14,11 @@ export interface ResponseData<T> {
   data: T;
 }
 
+export interface PostParamType {
+  title: string;
+  description: string;
+}
+
 class Request {
   instance: AxiosInstance;
 
@@ -48,12 +53,12 @@ class Request {
         let ret: Array<TodoInfo> = new Array<TodoInfo>();
 
         ret = response.data?.data.map((item: TodoInfoType): TodoInfo => {
-          return new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
+          return new TodoInfo().init(item?.id || -1, item.title, item.description, item?.completed || 0,
+            item.version || -1);
         });
-      }
-      else  if(url === '')
-
-      return response.data?.data; // 直接返回有用的数据部分
+      } else if (url === '') {
+        return response.data?.data;
+      } // 直接返回有用的数据部分
 
       // TODO: deal with server code later
       // 业务逻辑错误，可以统一提示

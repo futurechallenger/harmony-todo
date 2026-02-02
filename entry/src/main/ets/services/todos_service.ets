@@ -7,7 +7,8 @@ export async function fetchData(): Promise<TodoInfo[] | undefined> {
     await axios.get<ResponseData<TodoInfoType[] | null>, AxiosResponse<ResponseData<TodoInfoType[] | null>>, null>('http://192.168.31.109:17788/list/all')
   const todos: TodoInfo[] = [] as TodoInfo[]
   (response.data?.data || [] as TodoInfoType[]).forEach((item: TodoInfoType) => {
-    const todo = new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
+    const todo =
+      new TodoInfo().init(item?.id || 0, item.title, item.description, item?.completed || 0, item?.version || 0);
     todos.push(todo)
   })
 

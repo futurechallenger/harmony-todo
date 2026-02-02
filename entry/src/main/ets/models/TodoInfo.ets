@@ -1,11 +1,11 @@
 import { CommonConstants } from '../libs/Constants'
 
 export interface TodoInfoType {
-  id: number
+  id?: number
   title: string
   description: string
-  completed: number
-  version: number;
+  completed?: number
+  version?: number;
 }
 
 export class TodoInfo {

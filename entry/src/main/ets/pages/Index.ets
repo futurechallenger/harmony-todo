@@ -1,3 +1,4 @@
+import axios, { AxiosResponse } from '@ohos/axios';
 import { fetchData } from '../services/todos_service';
 import { SettingsComponent } from '../components/settings_component'
 import { Settings } from '../models/Settings'
@@ -13,6 +14,7 @@ import { ConnectionStatus } from '../models/ConnectionStatus';
 import { connection } from '@kit.NetworkKit'
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import Fetch from '@system.fetch';
+import { PostParamType, ResponseData } from '../libs/create_request';
 
 const DOMAIN = 0x0000
 
@@ -127,8 +129,18 @@ struct Index {
         // this.todoList = await this.dbUtils.queryData()
         // this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
 
-        // const todos: TodoInfo[] | null = await request.get<TodoInfo[] | null>({ url: "/list/all" })
-        // console.log('===>>>todos', todos);
+        const todoInfo: TodoInfoType = { title, description: desc }
+
+        const ret: AxiosResponse<ResponseData<TodoInfoType>> =
+          await axios.post('http://192.168.31.109:17788/add', todoInfo)
+        console.log('===>>>todos', JSON.stringify(ret)); // this.todoList.push(todo.data)
+
+        const todo: TodoInfoType | undefined = ret.data?.data;
+        if (!todo) {
+          throw new Error('Todo is empty')
+        }
+        this.todoList.push(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
+          todo.version || 0))
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
