@@ -1,5 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from '@ohos/axios';
-import { request, ResponseData } from '../libs/create_request';
+import { fetchData } from '../services/todos_service';
 import { SettingsComponent } from '../components/settings_component'
 import { Settings } from '../models/Settings'
 import { TodoList } from '../components/todo_list';
@@ -13,6 +12,7 @@ import { ConfigurationConstant } from '@kit.AbilityKit';
 import { ConnectionStatus } from '../models/ConnectionStatus';
 import { connection } from '@kit.NetworkKit'
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import Fetch from '@system.fetch';
 
 const DOMAIN = 0x0000
 
@@ -110,13 +110,7 @@ struct Index {
     console.log('=========Home page did build============')
     // NOTE: deal with sqlite `const ret = await this.dbUtils.queryData()`
     try {
-      const response: AxiosResponse<ResponseData<TodoInfoType[] | null>> =
-        await axios.get<ResponseData<TodoInfoType[] | null>, AxiosResponse<ResponseData<TodoInfoType[] | null>>, null>('http://192.168.31.109:17788/list/all')
-      const todos: TodoInfo[] = [] as TodoInfo[]
-      (response.data?.data || [] as TodoInfoType[]).forEach((item: TodoInfoType) => {
-        const todo = new TodoInfo().init(item.id, item.title, item.description, item.completed, item.version);
-        todos.push(todo)
-      })
+      const todos = await fetchData() || [];
       console.log('===>>>todos', JSON.stringify(todos));
 
       this.todoList = todos || []
@@ -158,7 +152,10 @@ struct Index {
               TodoList({
                 navPathStack: this.navPathStack,
                 todos: this.todoList,
-                isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow
+                isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow,
+                fetchData: async () => {
+                  this.todoList = await fetchData() || []
+                }
               })
             }
             .tabBar('Home')
