@@ -139,7 +139,7 @@ struct Index {
         if (!todo) {
           throw new Error('Todo is empty')
         }
-        this.todoList.push(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
+        this.todoList.unshift(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
           todo.version || 0))
       },
       onClose: () => {
