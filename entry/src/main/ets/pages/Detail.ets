@@ -111,7 +111,8 @@ export struct Detail {
             console.log('>>>detail page > requesting todo detail > no data')
             return;
           }
-          const todo = new TodoInfo().init(temp.id, temp.title, temp.description, temp.completed, temp.version);
+          const todo =
+            new TodoInfo().init(temp?.id || -1, temp.title, temp.description, temp?.completed || 0, temp?.version || 0);
 
           console.log('>>>detail page > requesting todo detail', JSON.stringify(todo));
           this.todo = todo
