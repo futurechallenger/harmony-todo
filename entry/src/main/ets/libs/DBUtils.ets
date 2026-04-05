@@ -70,8 +70,10 @@ export class DBUtils {
         this.store = database
       }
 
-      await (this.store as relationalStore.RdbStore).executeSql(CommonConstants.SQL_INSERT_TODO_TABLE,
-        [null, title, description, 0])
+      // await (this.store as relationalStore.RdbStore).executeSql(CommonConstants.SQL_INSERT_TODO_TABLE,
+      //   [null, title, description, 0])
+      (this.store as relationalStore.RdbStore).insertSync('todo_info', {title, description, completed: 0, deleted: 0});
+
       Logger.info('insert data table done.');
     } catch (error) {
       Logger.error(`===>>>ExecuteSql failed, code is ${error.code},message is ${error.message}`);
