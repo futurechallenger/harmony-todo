@@ -86,61 +86,62 @@ struct Index {
     })
 
 
-    let netSpecifier: connection.NetSpecifier = {
-      netCapabilities: {
-        bearerTypes: [connection.NetBearType.BEARER_CELLULAR, connection.NetBearType.BEARER_WIFI],
-        networkCap: [connection.NetCap.NET_CAPABILITY_INTERNET]
-      }
-    }
-
-    let conn = connection.createNetConnection(netSpecifier, 10)
-
-    conn.on('netAvailable', (data: connection.NetHandle) => {
-      hilog.info(DOMAIN, 'connection status', `Succeeded in connecting, data is ${JSON.stringify(data)}`);
-    });
-    conn.on('netUnavailable', (data: void) => {
-      hilog.info(DOMAIN, 'connection status', `network unavailable, data is ${JSON.stringify(data)}`)
-    })
-
-    conn.register((err: BusinessError, data: void) => {
-      hilog.info(DOMAIN, 'connection status',
-        `register result, err is ${JSON.stringify(err)}, data is ${JSON.stringify(data)}`)
-    })
+    // let netSpecifier: connection.NetSpecifier = {
+    //   netCapabilities: {
+    //     bearerTypes: [connection.NetBearType.BEARER_CELLULAR, connection.NetBearType.BEARER_WIFI],
+    //     networkCap: [connection.NetCap.NET_CAPABILITY_INTERNET]
+    //   }
+    // }
+    //
+    // let conn = connection.createNetConnection(netSpecifier, 10)
+    //
+    // conn.on('netAvailable', (data: connection.NetHandle) => {
+    //   hilog.info(DOMAIN, 'connection status', `Succeeded in connecting, data is ${JSON.stringify(data)}`);
+    // });
+    // conn.on('netUnavailable', (data: void) => {
+    //   hilog.info(DOMAIN, 'connection status', `network unavailable, data is ${JSON.stringify(data)}`)
+    // })
+    //
+    // conn.register((err: BusinessError, data: void) => {
+    //   hilog.info(DOMAIN, 'connection status',
+    //     `register result, err is ${JSON.stringify(err)}, data is ${JSON.stringify(data)}`)
+    // })
   }
 
   async onDidBuild() {
     console.log('=========Home page did build============')
-    // NOTE: deal with sqlite `const ret = await this.dbUtils.queryData()`
-    try {
-      const todos = await fetchData() || [];
-      console.log('===>>>todos', JSON.stringify(todos));
+    const ret = await this.dbUtils.queryData();
 
-      this.todoList = todos || []
-    } catch (error) {
-      console.error('===>>>request error', error);
-    }
+    // try {
+    //   const todos = await fetchData() || [];
+    //   console.log('===>>>todos', JSON.stringify(todos));
+    //
+    //   this.todoList = todos || []
+    // } catch (error) {
+    //   console.error('===>>>request error', error);
+    // }
   }
 
   @Builder
   dialogComponent() {
     AddTodoDialog({
       onAddTodo: async (title: string, desc: string) => {
-        // await this.dbUtils.insertData(title, desc)
-        // this.todoList = await this.dbUtils.queryData()
-        // this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
+        await this.dbUtils.insertData(title, desc)
+        this.todoList = await this.dbUtils.queryData()
+        this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
 
-        const todoInfo: TodoInfoType = { title, description: desc }
-
-        const ret: AxiosResponse<ResponseData<TodoInfoType>> =
-          await axios.post('http://192.168.31.109:17788/add', todoInfo)
-        console.log('===>>>todos', JSON.stringify(ret)); // this.todoList.push(todo.data)
-
-        const todo: TodoInfoType | undefined = ret.data?.data;
-        if (!todo) {
-          throw new Error('Todo is empty')
-        }
-        this.todoList.unshift(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
-          todo.version || 0))
+        // const todoInfo: TodoInfoType = { title, description: desc }
+        //
+        // const ret: AxiosResponse<ResponseData<TodoInfoType>> =
+        //   await axios.post('http://192.168.31.109:17788/add', todoInfo)
+        // console.log('===>>>todos', JSON.stringify(ret)); // this.todoList.push(todo.data)
+        //
+        // const todo: TodoInfoType | undefined = ret.data?.data;
+        // if (!todo) {
+        //   throw new Error('Todo is empty')
+        // }
+        // this.todoList.unshift(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
+        //   todo.version || 0))
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
