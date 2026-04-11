@@ -15,7 +15,7 @@
 
 import { relationalStore } from '@kit.ArkData';
 import { BusinessError } from "@kit.BasicServicesKit";
-import { TodoInfo } from '../models/TodoInfo'
+import { TodoModel } from '../model/TodoModel'
 import { CommonConstants } from './Constants'
 import Logger from './Logger';
 
@@ -83,7 +83,7 @@ export class DBUtils {
   /**
    * Querying User Table Information.
    */
-  async queryData(): Promise<TodoInfo[]> {
+  async queryData(): Promise<TodoModel[]> {
     if (!this.store) {
       console.log('=====>>>store is undefined')
       const database = await relationalStore.getRdbStore(this.context!.getHostContext(), STORE_CONFIG)
@@ -93,7 +93,7 @@ export class DBUtils {
       console.log('=====>>>store is set')
     }
 
-    const todoList: TodoInfo[] = [];
+    const todoList: TodoModel[] = [];
 
     try {
       console.log('=====>>>queryData')
@@ -108,7 +108,7 @@ export class DBUtils {
       Logger.info(`ResultSet column names: ${resultSet.columnNames}, column count: ${resultSet.columnCount}, row count: ${resultSet.rowCount}`);
 
       while (resultSet.goToNextRow()) {
-        const todo = new TodoInfo()
+        const todo = new TodoModel()
         let id = resultSet.getLong(resultSet.getColumnIndex("id"));
         todo.setID(id);
         let title = '';

@@ -1,6 +1,6 @@
-import { TodoInfo } from '../models/TodoInfo';
+import { TodoModel } from '../model/TodoModel';
 import { DBUtils } from '../libs/DBUtils'
-import { Settings } from '../models/Settings'
+import { Settings } from '../viewmodel/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
 import axios, { AxiosResponse } from '@ohos/axios';
 
@@ -17,7 +17,7 @@ export struct TodoList {
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
   }
   @Event fetchData: () => Promise<void>
-  @Param todos: Array<TodoInfo> = []
+  @Param todos: Array<TodoModel> = []
   @Consumer('refreshTodoList') refreshTodoList: string = ''
   @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
   @Local refreshing: boolean = false
@@ -38,7 +38,7 @@ export struct TodoList {
 
       Refresh({ refreshing: this.refreshing }) {
         List() {
-          ForEach(this.todos, (item: TodoInfo) => { // TODO: use Repeat later
+          ForEach(this.todos, (item: TodoModel) => { // TODO: use Repeat later
             ListItem() {
               Column() {
                 Row() {

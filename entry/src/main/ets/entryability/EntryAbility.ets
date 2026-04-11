@@ -3,8 +3,8 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { AbilityConstant, Configuration, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { AppStorageV2, window } from '@kit.ArkUI';
-import { ThemeModel } from '../models/ThemeModel';
-import {ConnectionStatus} from '../models/ConnectionStatus';
+import { ThemeModel } from '../viewmodel/ThemeModel';
+import {ConnectionStatus} from '../viewmodel/ConnectionStatus';
 
 const DOMAIN = 0x0000;
 

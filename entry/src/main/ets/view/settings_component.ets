@@ -1,12 +1,12 @@
 import { CapsuleSegmentButtonV2, PersistenceV2, SegmentButton, SegmentButtonV2Items } from '@kit.ArkUI'
-import { TodoInfo } from '../models/TodoInfo'
-import { Settings } from '../models/Settings'
+import { TodoModel } from '../model/TodoModel'
+import { Settings } from '../viewmodel/Settings'
 
 @Preview
 @ComponentV2
 export struct SettingsComponent {
   private settingsItems: string[] = ['settings 1', 'settings 2'];
-  @Local todoList: TodoInfo[] = [];
+  @Local todoList: TodoModel[] = [];
   @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
   @Local selectedIndex: number = 0
 

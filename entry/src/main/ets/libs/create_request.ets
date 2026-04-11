@@ -6,7 +6,7 @@ import axios, {
   AxiosError
 } from '@ohos/axios';
 import { promptAction } from '@kit.ArkUI'; // 用于显示提示信息
-import { TodoInfo, TodoInfoType } from '../models/TodoInfo';
+import { TodoModel, TodoModelType } from '../model/TodoModel';
 
 export interface ResponseData<T> {
   code?: number;
@@ -50,10 +50,10 @@ class Request {
       console.log('==>>response url', url);
       if (url === '/list/all') {
 
-        let ret: Array<TodoInfo> = new Array<TodoInfo>();
+        let ret: Array<TodoModel> = new Array<TodoModel>();
 
-        ret = response.data?.data.map((item: TodoInfoType): TodoInfo => {
-          return new TodoInfo().init(item?.id || -1, item.title, item.description, item?.completed || 0,
+        ret = response.data?.data.map((item: TodoModelType): TodoModel => {
+          return new TodoModel().init(item?.id || -1, item.title, item.description, item?.completed || 0,
             item.version || -1);
         });
       } else if (url === '') {

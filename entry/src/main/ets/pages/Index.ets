@@ -1,16 +1,16 @@
 import axios, { AxiosResponse } from '@ohos/axios';
 import { fetchData } from '../services/todos_service';
-import { SettingsComponent } from '../components/settings_component'
-import { Settings } from '../models/Settings'
-import { TodoList } from '../components/todo_list';
+import { SettingsComponent } from '../view/settings_component'
+import { Settings } from '../viewmodel/Settings'
+import { TodoList } from '../view/todo_list';
 import { Detail } from './Detail';
-import { AddTodoDialog } from '../components/add_todo_dialog';
-import { TodoInfo, TodoInfoType } from '../models/TodoInfo';
+import { AddTodoDialog } from '../view/add_todo_dialog';
+import { TodoModel, TodoModelType } from '../model/TodoModel';
 import { DBUtils } from '../libs/DBUtils'
 import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
-import { ThemeModel } from '../models/ThemeModel';
+import { ThemeModel } from '../viewmodel/ThemeModel';
 import { ConfigurationConstant } from '@kit.AbilityKit';
-import { ConnectionStatus } from '../models/ConnectionStatus';
+import { ConnectionStatus } from '../viewmodel/ConnectionStatus';
 import { connection } from '@kit.NetworkKit'
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import Fetch from '@system.fetch';
@@ -38,7 +38,7 @@ struct Index {
   @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme')
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
-  @Local todoList: TodoInfo[] = []
+  @Local todoList: TodoModel[] = []
   @Provider('refreshTodoList') refreshTodoList: string = '';
 
   @Monitor('appTheme.currentColorMode')
