@@ -1,13 +1,13 @@
 import axios, { Axios, AxiosResponse } from '@ohos/axios';
 import { ResponseData } from '../libs/create_request';
-import { TodoInfo, TodoInfoType } from '../models/TodoInfo';
+import { TodoModel, TodoModelType } from '../model/TodoModel';
 import { JSON } from '@kit.ArkTS';
 
 @Preview
 @ComponentV2
 export struct Detail {
   @Local todoId: number = 0
-  @Local todo?: TodoInfo
+  @Local todo?: TodoModel
   @Local highlightStatus: number = -1
 
   aboutToAppear(): void {
@@ -96,7 +96,7 @@ export struct Detail {
     }
     .title("Detail")
     .onReady((context: NavDestinationContext) => {
-      const params = context.pathInfo.param as TodoInfo;
+      const params = context.pathInfo.param as TodoModel;
       console.log('==> todo detail > Nav params > ', { title: params?.getTitle(), id: params?.getID() })
       // const newTodo = new TodoInfo();
       // newTodo.init(params.getID() || 0, params.getTitle(), params.getDescription(),!params.getCompleted() ? 0 : 1, params.getVersion())
@@ -104,15 +104,15 @@ export struct Detail {
       this.todoId = params?.getID() || 0
       console.log('>>>detail page > requesting todo detail')
       axios.get(`http://192.168.31.109:17788/todo/${this.todoId}`)
-        .then((res: AxiosResponse<ResponseData<TodoInfoType | null>>) => {
-          const temp: TodoInfoType | null = res.data.data;
+        .then((res: AxiosResponse<ResponseData<TodoModelType | null>>) => {
+          const temp: TodoModelType | null = res.data.data;
           if (!temp) {
 
             console.log('>>>detail page > requesting todo detail > no data')
             return;
           }
           const todo =
-            new TodoInfo().init(temp?.id || -1, temp.title, temp.description, temp?.completed || 0, temp?.version || 0);
+            new TodoModel().init(temp?.id || -1, temp.title, temp.description, temp?.completed || 0, temp?.version || 0);
 
           console.log('>>>detail page > requesting todo detail', JSON.stringify(todo));
           this.todo = todo

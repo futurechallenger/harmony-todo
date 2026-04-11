@@ -1,6 +1,6 @@
 import { CommonConstants } from '../libs/Constants'
 
-export interface TodoInfoType {
+export interface TodoModelType {
   id?: number
   title: string
   description: string
@@ -8,7 +8,7 @@ export interface TodoInfoType {
   version?: number;
 }
 
-export class TodoInfo {
+export class TodoModel {
   private id?: number
   private title: string
   private description: string
