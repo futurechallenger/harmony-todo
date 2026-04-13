@@ -1,38 +1,43 @@
 import { Type } from '@kit.ArkUI';
 import { TodoListModel } from '../model/TodoListModel';
+import { TodoModel } from '../model/TodoModel';
 import { TodoViewModel } from './TodoViewModel';
 
 @ObservedV2
 export class TodoListViewModel {
-  @Type(TodoViewModel)
-  @Trace private _todoList: TodoViewModel[] = [];
+  // @Type(TodoViewModel)
+  @Trace todoList: TodoViewModel[] = [];
+  private _todoListModel: TodoListModel = new TodoListModel();
 
-  public get todoList(): TodoViewModel[] {
-    return this._todoList;
-  }
-
-  public set todoList(value: TodoViewModel[]) {
-    this._todoList = value;
-  }
 
   async loadTodoList() {
-    const todoListModel = new TodoListModel();
-    todoListModel.loadTodoList();
+    this._todoListModel.loadTodoList();
 
-    for (let todo of todoListModel.todos) {
-      let todoViewModel = new TodoViewModel();
-      todoViewModel.updateTodo(todo);
-      this._todoList.push(todoViewModel);
+    for (let todo of this._todoListModel.todos) {
+      let todoViewModel = new TodoViewModel(todo);
+      this.todoList.push(todoViewModel);
     }
   }
 
-  addTodo(todo: TodoViewModel) {
+  async addTodo(title: string, description: string = '') {
     // TODO: refactor to deal with sqlite
-    this._todoList.push(todo);
+    try {
+      const todo: TodoModel = new TodoModel({ title, description });
+      this._todoListModel.addTodo(todo);
+      this.todoList.push(new TodoViewModel(todo));
+    } catch (err) {
+
+    }
   }
 
   removeTodo(todo: TodoViewModel) {
     // TODO: refactor to deal with sqlite
-    this._todoList.splice(this._todoList.indexOf(todo), 1);
+    try{
+      const todoModel = new TodoModel();
+      todoModel.delete(todo.id);
+      this.todoList.splice(this.todoList.indexOf(todo), 1);
+    } catch(err) {
+
+    }
   }
 }

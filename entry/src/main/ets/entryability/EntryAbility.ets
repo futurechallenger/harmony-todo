@@ -5,6 +5,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { AppStorageV2, window } from '@kit.ArkUI';
 import { ThemeModel } from '../viewmodel/ThemeModel';
 import {ConnectionStatus} from '../viewmodel/ConnectionStatus';
+import { TodoRepository } from '../libs/repository';
 
 const DOMAIN = 0x0000;
 
@@ -14,6 +15,9 @@ export default class EntryAbility extends UIAbility {
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     try {
       console.log('==========EntryAbility starting=========')
+      const repo = await TodoRepository.getInstance(this.context)
+      AppStorageV2.connect(TodoRepository, () => repo)
+
       const initialColorModel = this.context.config.colorMode;
       AppStorageV2.connect<ThemeModel>(ThemeModel, 'app_theme', () => new ThemeModel(initialColorModel))
       AppStorageV2.connect<ConnectionStatus>(ConnectionStatus, 'connection_status', () => new ConnectionStatus())
