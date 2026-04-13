@@ -20,11 +20,23 @@ export class TodoViewModel {
     this.completed = todo.completed;
   }
 
-  updateTodo(todo: TodoModel) {
-    this.title = todo.title;
-    this.description = todo.description;
-    this.completed = todo.completed;
+  toModel(): TodoModel {
+    return new TodoModel({
+      id: this.id,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      title: this.title,
+      description: this.description,
+      completed: this.completed,
+      version: this.version,
+    });
   }
+
+  // updateTodo(todo: TodoModel) {
+  //   this.title = todo.title;
+  //   this.description = todo.description;
+  //   this.completed = todo.completed;
+  // }
 
   //
   // updateIsCompleted(completed: boolean) {

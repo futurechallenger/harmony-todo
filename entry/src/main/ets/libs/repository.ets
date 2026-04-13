@@ -115,14 +115,8 @@ export class TodoRepository {
     await this.rdbStore.insert('todo_info', valueBucket)
   }
 
-  async updateStatus(id: number, columnNames: string[], values: string | boolean[]): Promise<void> {
-    if (columnNames.length === 0 || values.length === 0) {
-      throw new Error('columnNames or values is empty')
-    }
-
-    const updateStatement = 'UPDATE todo_info SET ' + columnNames.map((columnName, index) => {
-      return `${columnName} = '${values[index]}'`
-    }).join(', ') + ` WHERE id = ${id}}`
+  async updateStatus(todo: TodoModel): Promise<void> {
+    const updateStatement = 'UPDATE todo_info SET ' + todo.toKeyValuePairs() + ` WHERE id = ${todo.id}}`
 
     if (!this.rdbStore) {
       this.rdbStore = await relationalStore.getRdbStore(this.context!, STORE_CONFIG)
@@ -132,7 +126,9 @@ export class TodoRepository {
   }
 
   async deleteTodo(id: number): Promise<boolean> {
-    if (!this.rdbStore) throw new Error('数据库未初始化');
+    if (!this.rdbStore) {
+      throw new Error('数据库未初始化');
+    }
 
     const predicates = new relationalStore.RdbPredicates('todo_info');
     predicates.equalTo('id', id);

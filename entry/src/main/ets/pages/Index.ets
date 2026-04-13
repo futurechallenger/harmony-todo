@@ -30,7 +30,7 @@ struct Index {
   @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme', () => new ThemeModel())
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
-  @Local todoList: TodoListViewModel = new TodoListViewModel()
+  @Local todoList: TodoListViewModel = new TodoListViewModel(this.getUIContext().getHostContext())
   @Provider('refreshTodoList') refreshTodoList: string = '';
 
   @Monitor('appTheme.currentColorMode')

@@ -11,9 +11,10 @@ interface TodoModelType {
   updatedAt: number;
 }
 
+type KVValue = string | number | boolean;
+
 // model/TodoModel.ets
 export class TodoModel {
-  private _repo?: TodoRepository = AppStorageV2.connect(TodoRepository);
   id: number = 0; // 主键
   title: string = ''; // 标题
   description: string = ''; // 描述
@@ -46,6 +47,22 @@ export class TodoModel {
     };
   }
 
+  toKeyValuePairs(): string {
+    const escapeValue = (str: string): string => {
+      return str.replace(/'/g, "\\'").replace(/,/g, '\\,');
+    };
+
+    return [
+      `id=${this.id}`,
+      `title='${escapeValue(this.title)}'`,
+      `description='${escapeValue(this.description)}'`,
+      `completed=${this.completed}`,
+      `version=${this.version}`,
+      `createdAt=${this.createdAt}`,
+      `updatedAt=${this.updatedAt}`
+    ].join(',');
+  }
+
   // 从数据库记录创建实例
   static fromDatabase(record: TodoModelType): TodoModel {
     return new TodoModel({
@@ -57,13 +74,5 @@ export class TodoModel {
       createdAt: record.createdAt,
       updatedAt: record.updatedAt
     });
-  }
-
-  async save() {
-    await this._repo!.insert(this);
-  }
-
-  async delete(id: number) {
-    await this._repo!.deleteTodo(id)
   }
 }

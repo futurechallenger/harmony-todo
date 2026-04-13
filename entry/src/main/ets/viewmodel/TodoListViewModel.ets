@@ -5,12 +5,18 @@ import { TodoViewModel } from './TodoViewModel';
 
 @ObservedV2
 export class TodoListViewModel {
-  // @Type(TodoViewModel)
   @Trace todoList: TodoViewModel[] = [];
-  private _todoListModel: TodoListModel = new TodoListModel();
+  private _todoListModel?: TodoListModel
 
+  constructor(context?: Context) {
+    this._todoListModel = new TodoListModel(context);
+  }
 
   async loadTodoList() {
+    if (!this._todoListModel) {
+      throw new Error('TodoListModel is not initialized');
+    }
+
     this._todoListModel.loadTodoList();
 
     for (let todo of this._todoListModel.todos) {
@@ -23,7 +29,7 @@ export class TodoListViewModel {
     // TODO: refactor to deal with sqlite
     try {
       const todo: TodoModel = new TodoModel({ title, description });
-      this._todoListModel.addTodo(todo);
+      await this._todoListModel?.addTodo(todo);
       this.todoList.push(new TodoViewModel(todo));
     } catch (err) {
 
@@ -32,11 +38,10 @@ export class TodoListViewModel {
 
   removeTodo(todo: TodoViewModel) {
     // TODO: refactor to deal with sqlite
-    try{
-      const todoModel = new TodoModel();
-      todoModel.delete(todo.id);
+    try {
+      this._todoListModel?.deleteTodo(todo.toModel());
       this.todoList.splice(this.todoList.indexOf(todo), 1);
-    } catch(err) {
+    } catch (err) {
 
     }
   }
