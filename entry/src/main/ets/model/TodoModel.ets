@@ -1,79 +1,69 @@
-import { CommonConstants } from '../libs/Constants'
+import { AppStorageV2 } from '@kit.ArkUI';
+import { TodoRepository } from "../libs/repository";
 
-export interface TodoModelType {
-  id?: number
-  title: string
-  description: string
-  completed?: number
-  version?: number;
+interface TodoModelType {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean | number;
+  version: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
+// model/TodoModel.ets
 export class TodoModel {
-  private id?: number
-  private title: string
-  private description: string
-  private completed: number
-  private version: number;
+  private _repo?: TodoRepository = AppStorageV2.connect(TodoRepository);
+  id: number = 0; // 主键
+  title: string = ''; // 标题
+  description: string = ''; // 描述
+  completed: boolean = false; // 完成状态
+  version: number = 0; // 版本（用于乐观锁）
+  createdAt: number = Date.now(); // 创建时间
+  updatedAt: number = Date.now(); // 更新时间
 
-  constructor() {
-    this.id = undefined;
-    this.title = CommonConstants.EMPTY_STRING;
-    this.description = CommonConstants.EMPTY_STRING;
-    this.completed = 0;
-    this.version = 0;
+
+  constructor(data?: Partial<TodoModelType>) {
+    this.id = data?.id ?? 0;
+    this.title = data?.title ?? '';
+    this.description = data?.description ?? '';
+    this.completed = !!data?.completed;
+    this.version = data?.version ?? 0;
+    this.createdAt = data?.createdAt ?? Date.now();
+    this.updatedAt = data?.updatedAt ?? Date.now();
   }
 
-  init(id: number, title: string, description: string, completed: number, version: number) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.completed = completed;
-    this.version = version;
-
-    return this;
+  // 转换为普通对象（用于存储）
+  toPlainObject(): TodoModelType {
+    return {
+      id: this.id,
+      title: this.title,
+      description: this.description,
+      completed: this.completed ? 1 : 0, // SQLite 存储布尔值为整数
+      version: this.version,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
   }
 
-  public getID(): number | undefined {
-    return this.id;
+  // 从数据库记录创建实例
+  static fromDatabase(record: TodoModelType): TodoModel {
+    return new TodoModel({
+      id: record.id,
+      title: record.title,
+      description: record.description,
+      completed: !!record.completed, // 转换回布尔值
+      version: record.version,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt
+    });
   }
 
-  public setID(id: number) {
-    this.id = id;
+  async save() {
+    await this._repo!.insert(this);
   }
 
-  public getTitle(): string {
-    return this.title;
-  }
-
-  public setTitle(title: string) {
-    this.title = title;
-  }
-
-  public getDescription(): string {
-    return this.description;
-  }
-
-  public setDescription(description: string) {
-    this.description = description;
-  }
-
-  public getCompleted(): boolean {
-    return this.completed === 1;
-  }
-
-  public setCompleted(completed: boolean | number) {
-    if (typeof completed === 'number') {
-      this.completed = completed
-    } else {
-      this.completed = !completed ? 0 : 1;
-    }
-  }
-
-  public getVersion(): number {
-    return this.version;
-  }
-
-  public setVersion(version: number) {
-    this.version = version;
+  async delete(id: number) {
+    await this._repo!.deleteTodo(id)
   }
 }

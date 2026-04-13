@@ -3,6 +3,8 @@ import { DBUtils } from '../libs/DBUtils'
 import { Settings } from '../viewmodel/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
 import axios, { AxiosResponse } from '@ohos/axios';
+import { TodoListViewModel } from '../viewmodel/TodoListViewModel';
+import { TodoViewModel } from '../viewmodel/TodoViewModel';
 
 /*
  * TODO:
@@ -16,16 +18,15 @@ export struct TodoList {
   @Require @Param navPathStack: NavPathStack = new NavPathStack()
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
   }
-  @Event fetchData: () => Promise<void>
-  @Param todos: Array<TodoModel> = []
+  @Param todos: TodoListViewModel = new TodoListViewModel();
   @Consumer('refreshTodoList') refreshTodoList: string = ''
   @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
   @Local refreshing: boolean = false
 
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
-    // const ret: AxiosResponse = await axios.get('http://localhost:17788/list/all')
     console.log('======todo list aboutToAppear', this.todos)
+    this.todos.loadTodoList()
   }
 
   onDidBuild(): void {
@@ -38,16 +39,16 @@ export struct TodoList {
 
       Refresh({ refreshing: this.refreshing }) {
         List() {
-          ForEach(this.todos, (item: TodoModel) => { // TODO: use Repeat later
+          ForEach(this.todos.todoList, (item: TodoViewModel) => { // TODO: use Repeat later
             ListItem() {
               Column() {
                 Row() {
                   Column() {
-                    Text(item.getTitle())
+                    Text(item.title)
                       .fontWeight(FontWeight.Bold)
                       .fontColor($r('app.color.title_color'))
                       .fontSize(this.settings.fontSize === 'small' ? 16 : this.settings.fontSize === 'medium' ? 22 : 30)
-                    Text(item.getDescription())
+                    Text(item.description)
                       .fontColor($r('app.color.text_color'))
                       .fontSize(this.settings.fontSize === 'small' ? 14 : this.settings.fontSize === 'medium' ? 20 : 28)
                   }
@@ -85,7 +86,6 @@ export struct TodoList {
         this.refreshing = true;
 
         try {
-          this.fetchData()
           this.refreshing = false;
           console.log('======todo list onRefresh done')
         } catch (err) {

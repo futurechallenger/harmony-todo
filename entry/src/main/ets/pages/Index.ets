@@ -1,20 +1,13 @@
-import axios, { AxiosResponse } from '@ohos/axios';
 import { fetchData } from '../services/todos_service';
 import { SettingsComponent } from '../view/settings_component'
-import { Settings } from '../viewmodel/Settings'
 import { TodoList } from '../view/todo_list';
 import { Detail } from './Detail';
 import { AddTodoDialog } from '../view/add_todo_dialog';
-import { TodoModel, TodoModelType } from '../model/TodoModel';
 import { DBUtils } from '../libs/DBUtils'
 import { AppStorageV2, PersistenceV2, window } from '@kit.ArkUI';
 import { ThemeModel } from '../viewmodel/ThemeModel';
 import { ConfigurationConstant } from '@kit.AbilityKit';
-import { ConnectionStatus } from '../viewmodel/ConnectionStatus';
-import { connection } from '@kit.NetworkKit'
-import { hilog } from '@kit.PerformanceAnalysisKit';
-import Fetch from '@system.fetch';
-import { PostParamType, ResponseData } from '../libs/create_request';
+import { TodoListViewModel } from '../viewmodel/TodoListViewModel';
 
 const DOMAIN = 0x0000
 
@@ -31,14 +24,13 @@ interface Res {
 @ComponentV2
 struct Index {
   private dialogComponentId: number = -1
-  private dbUtils: DBUtils = new DBUtils(this.getUIContext())
+  // private dbUtils: DBUtils = new DBUtils(this.getUIContext())
   private currentWindow: window.Window | undefined = undefined
-  // @Provider('navPathStack') navPathStack: NavPathStack = new NavPathStack()
 
-  @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme')
+  @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme', () => new ThemeModel())
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
-  @Local todoList: TodoModel[] = []
+  @Local todoList: TodoListViewModel = new TodoListViewModel()
   @Provider('refreshTodoList') refreshTodoList: string = '';
 
   @Monitor('appTheme.currentColorMode')
@@ -68,7 +60,8 @@ struct Index {
 
   aboutToAppear(): void {
     console.log('=========Home page starting============')
-    this.dbUtils.createDB()
+    // TODO: init the db again here?
+    // this.dbUtils.createDB()
 
     window.getLastWindow(this.getUIContext().getHostContext(), (err: BusinessError, data) => {
       this.currentWindow = data
@@ -84,64 +77,22 @@ struct Index {
         }
       }
     })
-
-
-    // let netSpecifier: connection.NetSpecifier = {
-    //   netCapabilities: {
-    //     bearerTypes: [connection.NetBearType.BEARER_CELLULAR, connection.NetBearType.BEARER_WIFI],
-    //     networkCap: [connection.NetCap.NET_CAPABILITY_INTERNET]
-    //   }
-    // }
-    //
-    // let conn = connection.createNetConnection(netSpecifier, 10)
-    //
-    // conn.on('netAvailable', (data: connection.NetHandle) => {
-    //   hilog.info(DOMAIN, 'connection status', `Succeeded in connecting, data is ${JSON.stringify(data)}`);
-    // });
-    // conn.on('netUnavailable', (data: void) => {
-    //   hilog.info(DOMAIN, 'connection status', `network unavailable, data is ${JSON.stringify(data)}`)
-    // })
-    //
-    // conn.register((err: BusinessError, data: void) => {
-    //   hilog.info(DOMAIN, 'connection status',
-    //     `register result, err is ${JSON.stringify(err)}, data is ${JSON.stringify(data)}`)
-    // })
   }
 
   async onDidBuild() {
     console.log('=========Home page did build============')
-    const ret = await this.dbUtils.queryData();
-
-    // try {
-    //   const todos = await fetchData() || [];
-    //   console.log('===>>>todos', JSON.stringify(todos));
-    //
-    //   this.todoList = todos || []
-    // } catch (error) {
-    //   console.error('===>>>request error', error);
-    // }
+    this.todoList.loadTodoList()
   }
 
   @Builder
   dialogComponent() {
     AddTodoDialog({
       onAddTodo: async (title: string, desc: string) => {
-        await this.dbUtils.insertData(title, desc)
-        this.todoList = await this.dbUtils.queryData()
-        this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
+        // TODO: add todo
+        // TODO: refresh todo list
 
-        // const todoInfo: TodoInfoType = { title, description: desc }
-        //
-        // const ret: AxiosResponse<ResponseData<TodoInfoType>> =
-        //   await axios.post('http://192.168.31.109:17788/add', todoInfo)
-        // console.log('===>>>todos', JSON.stringify(ret)); // this.todoList.push(todo.data)
-        //
-        // const todo: TodoInfoType | undefined = ret.data?.data;
-        // if (!todo) {
-        //   throw new Error('Todo is empty')
-        // }
-        // this.todoList.unshift(new TodoInfo().init(todo?.id || -1, todo.title, todo.description, todo.completed || 0,
-        //   todo.version || 0))
+        this.todoList.addTodo(title, desc)
+        this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
       },
       onClose: () => {
         this.getUIContext().getPromptAction().closeCustomDialog(this.dialogComponentId)
@@ -166,9 +117,9 @@ struct Index {
                 navPathStack: this.navPathStack,
                 todos: this.todoList,
                 isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow,
-                fetchData: async () => {
-                  this.todoList = await fetchData() || []
-                }
+                // fetchData: async () => {
+                //   this.todoList = await fetchData() || []
+                // }
               })
             }
             .tabBar('Home')
@@ -212,10 +163,8 @@ struct Index {
             .openCustomDialog({
               builder: () => {
                 this.dialogComponent()
-                // AddTodoDialog() NOTE Error
               },
               isModal: true,
-              // maskColor: Color.Yellow,
             })
             .then((dialogId: number) => {
               this.dialogComponentId = dialogId

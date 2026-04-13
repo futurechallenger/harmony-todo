@@ -110,17 +110,17 @@ export class DBUtils {
       while (resultSet.goToNextRow()) {
         const todo = new TodoModel()
         let id = resultSet.getLong(resultSet.getColumnIndex("id"));
-        todo.setID(id);
+        todo.id = id;
         let title = '';
         let description = ''
         let completed = 0;
         try {
           title = resultSet.getString(resultSet.getColumnIndex('title'));
-          todo.setTitle(title);
+          todo.title = title
           description = resultSet.getString(resultSet.getColumnIndex('description'));
-          todo.setDescription(description)
+          todo.description = description
           completed = resultSet.getLong(resultSet.getColumnIndex('completed'));
-          todo.setCompleted(completed)
+          todo.completed = completed !== 0
 
           todoList.push(todo)
         } catch (error) {
