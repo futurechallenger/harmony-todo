@@ -18,7 +18,7 @@ export struct TodoList {
   @Require @Param navPathStack: NavPathStack = new NavPathStack()
   @Event isShowFloatingButton: (isShow: boolean) => void = () => {
   }
-  @Param todos: TodoListViewModel = new TodoListViewModel();
+  @Require @Param todos: TodoViewModel[];
   @Consumer('refreshTodoList') refreshTodoList: string = ''
   @Local settings: Settings = PersistenceV2.connect(Settings, 'Settings', () => new Settings())!
   @Local refreshing: boolean = false
@@ -26,7 +26,6 @@ export struct TodoList {
   async aboutToAppear() {
     console.log('======todo list aboutToAppear', this.refreshTodoList)
     console.log('======todo list aboutToAppear', this.todos)
-    this.todos.loadTodoList()
   }
 
   onDidBuild(): void {
@@ -39,7 +38,7 @@ export struct TodoList {
 
       Refresh({ refreshing: this.refreshing }) {
         List() {
-          ForEach(this.todos.todoList, (item: TodoViewModel) => { // TODO: use Repeat later
+          ForEach(this.todos, (item: TodoViewModel) => { // TODO: use Repeat or LazyForEach later
             ListItem() {
               Column() {
                 Row() {

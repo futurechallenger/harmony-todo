@@ -54,7 +54,7 @@ export class TodoRepository {
     }
 
     // ... 查询逻辑
-    const resultSet = await this.rdbStore.querySql('SELECT * FROM todos ORDER BY create_time DESC')
+    const resultSet = await this.rdbStore.querySql('SELECT * FROM todo_info ORDER BY createdAt DESC')
     const list: TodoModel[] = []
     while (resultSet.goToNextRow()) {
       const todo = new TodoModel()
@@ -62,7 +62,7 @@ export class TodoRepository {
       todo.title = resultSet.getString(resultSet.getColumnIndex('title'))
       todo.description = resultSet.getString(resultSet.getColumnIndex('description'))
       todo.completed = resultSet.getLong(resultSet.getColumnIndex('completed')) === 1
-      todo.createdAt = resultSet.getDouble(resultSet.getColumnIndex('createAt'))
+      todo.createdAt = resultSet.getDouble(resultSet.getColumnIndex('createdAt'))
       todo.updatedAt = resultSet.getDouble(resultSet.getColumnIndex('updatedAt'))
 
       list.push(todo)
@@ -106,7 +106,7 @@ export class TodoRepository {
     }
 
     const valueBucket: ValuesBucket = {
-      id: todo.id,
+      // id: todo.id,
       title: todo.title,
       description: todo.description,
       completed: todo.completed ? 1 : 0,

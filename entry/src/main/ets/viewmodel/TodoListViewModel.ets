@@ -13,11 +13,14 @@ export class TodoListViewModel {
   }
 
   async loadTodoList() {
+    console.log('>>>>TodoListViewModel > loadTodoList')
     if (!this._todoListModel) {
       throw new Error('TodoListModel is not initialized');
     }
 
-    this._todoListModel.loadTodoList();
+
+    await this._todoListModel.loadTodoList();
+    console.log('>>>>TodoListViewModel > loadTodoList', this._todoListModel?.todos?.length);
 
     for (let todo of this._todoListModel.todos) {
       let todoViewModel = new TodoViewModel(todo);
