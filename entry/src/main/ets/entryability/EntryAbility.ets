@@ -15,8 +15,7 @@ export default class EntryAbility extends UIAbility {
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam) {
     try {
       console.log('==========EntryAbility starting=========')
-      const repo = await TodoRepository.getInstance(this.context)
-      AppStorageV2.connect(TodoRepository, () => repo)
+      await TodoRepository.getInstance(this.context)
 
       const initialColorModel = this.context.config.colorMode;
       AppStorageV2.connect<ThemeModel>(ThemeModel, 'app_theme', () => new ThemeModel(initialColorModel))

@@ -30,7 +30,7 @@ struct Index {
   @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme', () => new ThemeModel())
   @Local navPathStack: NavPathStack = new NavPathStack()
   @Local showFloatingButton: boolean = true
-  @Local todoList: TodoListViewModel = new TodoListViewModel()
+  @Local todoList: TodoListViewModel = new TodoListViewModel(this.getUIContext().getHostContext())
   @Provider('refreshTodoList') refreshTodoList: string = '';
 
   @Monitor('appTheme.currentColorMode')
@@ -58,10 +58,11 @@ struct Index {
     }
   }
 
-  aboutToAppear(): void {
+  async aboutToAppear(): Promise<void> {
     console.log('=========Home page starting============')
     // TODO: init the db again here?
     // this.dbUtils.createDB()
+    await this.todoList.loadTodoList()
 
     window.getLastWindow(this.getUIContext().getHostContext(), (err: BusinessError, data) => {
       this.currentWindow = data
@@ -81,7 +82,6 @@ struct Index {
 
   async onDidBuild() {
     console.log('=========Home page did build============')
-    this.todoList.loadTodoList()
   }
 
   @Builder
@@ -91,7 +91,7 @@ struct Index {
         // TODO: add todo
         // TODO: refresh todo list
 
-        this.todoList.addTodo(title, desc)
+        await this.todoList.addTodo(title, desc)
         this.refreshTodoList = `refresh ${title} ${desc} - ${new Date().getTime()}}`
       },
       onClose: () => {
@@ -115,11 +115,8 @@ struct Index {
             TabContent() {
               TodoList({
                 navPathStack: this.navPathStack,
-                todos: this.todoList,
+                todos: this.todoList.todoList,
                 isShowFloatingButton: (isShow: boolean) => this.showFloatingButton = isShow,
-                // fetchData: async () => {
-                //   this.todoList = await fetchData() || []
-                // }
               })
             }
             .tabBar('Home')
