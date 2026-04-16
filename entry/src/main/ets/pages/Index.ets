@@ -24,7 +24,6 @@ interface Res {
 @ComponentV2
 struct Index {
   private dialogComponentId: number = -1
-  // private dbUtils: DBUtils = new DBUtils(this.getUIContext())
   private currentWindow: window.Window | undefined = undefined
 
   @Local appTheme: ThemeModel | undefined = AppStorageV2.connect(ThemeModel, 'app_theme', () => new ThemeModel())
@@ -174,3 +173,4 @@ struct Index {
     }
   }
 }
+

@@ -18,8 +18,7 @@ export default class EntryAbility extends UIAbility {
       await TodoRepository.getInstance(this.context)
 
       const initialColorModel = this.context.config.colorMode;
-      AppStorageV2.connect<ThemeModel>(ThemeModel, 'app_theme', () => new ThemeModel(initialColorModel))
-      AppStorageV2.connect<ConnectionStatus>(ConnectionStatus, 'connection_status', () => new ConnectionStatus())
+
 
     } catch (err) {
       hilog.error(DOMAIN, 'testTag', 'Failed to set colorMode. Cause: %{public}s', JSON.stringify(err));

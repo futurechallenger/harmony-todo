@@ -8,6 +8,8 @@ export class TodoListViewModel {
   @Trace todoList: TodoViewModel[] = [];
   private _todoListModel?: TodoListModel
 
+  // TODO: Add error message for display
+
   constructor(context?: Context) {
     this._todoListModel = new TodoListModel(context);
   }
