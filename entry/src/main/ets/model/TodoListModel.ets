@@ -1,5 +1,4 @@
 import { TodoModel } from './TodoModel';
-import { AppStorageV2 } from '@kit.ArkUI';
 import { TodoRepository } from '../libs/repository';
 
 export class TodoListModel {

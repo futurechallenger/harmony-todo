@@ -1,5 +1,5 @@
 import { relationalStore, ValuesBucket } from '@kit.ArkData'
-import { Context } from '@kit.AbilityKit' // 明确导入 Context 类型
+import { Context } from '@kit.AbilityKit'
 import { TodoModel } from '../model/TodoModel'
 
 export const DB_NAME = 'todo_db.db'
@@ -28,7 +28,6 @@ export class TodoRepository {
   private rdbStore: relationalStore.RdbStore | null = null
   private context: Context | null = null
 
-  // 修改：要求传入 Context
   static async getInstance(context?: Context): Promise<TodoRepository> {
     if (!TodoRepository.instance) {
       if (!context) {
@@ -40,20 +39,17 @@ export class TodoRepository {
     return TodoRepository.instance
   }
 
-  // 修改：通过参数接收，不再调用 getContext()
   private async init(context: Context): Promise<void> {
     this.context = context
     this.rdbStore = await relationalStore.getRdbStore(context, STORE_CONFIG)
     await this.rdbStore.executeSql(CREATE_TABLE_SQL)
   }
 
-  // ... 其他 CRUD 方法保持不变，使用 this.rdbStore
   async queryAll(): Promise<TodoModel[]> {
     if (!this.rdbStore) {
       this.rdbStore = await relationalStore.getRdbStore(this.context!, STORE_CONFIG)
     }
 
-    // ... 查询逻辑
     const resultSet = await this.rdbStore.querySql('SELECT * FROM todo_info ORDER BY createdAt DESC')
     const list: TodoModel[] = []
     while (resultSet.goToNextRow()) {
