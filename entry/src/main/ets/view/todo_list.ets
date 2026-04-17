@@ -1,4 +1,5 @@
 import { TodoModel } from '../model/TodoModel';
+import { common, Want } from '@kit.AbilityKit'
 import { DBUtils } from '../libs/DBUtils'
 import { Settings } from '../viewmodel/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
@@ -58,7 +59,17 @@ export struct TodoList {
                     .height(24)
                     .onClick(() => {
                       this.isShowFloatingButton(false)
-                      this.navPathStack.pushPathByName('detail', item)
+                      // this.navPathStack.pushPathByName('detail', item)
+
+                      const want: Want = {
+                        deviceId: '',
+                        bundleName: 'com.example.myapplication',
+                        abilityName: 'DetailAbility',
+                        parameters: {
+                          todo: JSON.stringify(item.toModel())
+                        }
+                      };
+                      (this.getUIContext().getHostContext() as common.UIAbilityContext).startAbility(want)
                     })
                 }
                 .width('100%')
