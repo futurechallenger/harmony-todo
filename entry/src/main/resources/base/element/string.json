@@ -19,6 +19,14 @@
     {
       "name": "request_network_info",
       "value": "request network info premission"
+    },
+    {
+      "name": "DetailAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "DetailAbility_label",
+      "value": "label"
     }
   ]
 }
