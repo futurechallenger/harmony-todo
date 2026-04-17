@@ -50,8 +50,18 @@ export default class EntryAbility extends UIAbility {
     });
   }
 
-  onWindowStageDestroy(): void {
-    hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
+  onWindowStageWillDestroy(windowStage: window.WindowStage): void {
+    // 释放通过windowStage对象获取的资源
+    // 在onWindowStageWillDestroy()中注销WindowStage事件订阅（获焦/失焦、切到前台/切到后台、前台可交互/前台不可交互）
+    try {
+      if (windowStage) {
+        windowStage.off('windowStageEvent');
+      }
+    } catch (err) {
+      let code = (err as BusinessError).code;
+      let message = (err as BusinessError).message;
+      hilog.error(DOMAIN, 'testTag', `Failed to disable the listener for windowStageEvent. Code is ${code}, message is ${message}`);
+    }
   }
 
   onForeground(): void {
