@@ -1,10 +1,7 @@
-import { TodoModel } from '../model/TodoModel';
 import { common, Want } from '@kit.AbilityKit'
 import { DBUtils } from '../libs/DBUtils'
 import { Settings } from '../viewmodel/Settings'
 import { PersistenceV2 } from '@kit.ArkUI'
-import axios, { AxiosResponse } from '@ohos/axios';
-import { TodoListViewModel } from '../viewmodel/TodoListViewModel';
 import { TodoViewModel } from '../viewmodel/TodoViewModel';
 
 /*

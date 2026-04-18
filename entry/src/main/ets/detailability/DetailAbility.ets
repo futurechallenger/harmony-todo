@@ -3,6 +3,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { AppStorageV2, window } from '@kit.ArkUI';
 import { TodoModel } from '../model/TodoModel';
 import { TodoViewModel } from '../viewmodel/TodoViewModel';
+import {emitter} from '@kit.BasicServicesKit';
 
 const DOMAIN = 0x0000;
 
@@ -17,12 +18,17 @@ export default class DetailAbility extends UIAbility {
       return;
     }
 
-    const todoInfo =new TodoViewModel( JSON.parse(todo as string) as TodoModel);
+    const todoInfo = new TodoViewModel(JSON.parse(todo as string) as TodoModel);
     AppStorageV2.connect<TodoViewModel>(TodoViewModel, 'todo_detail', () => todoInfo)
+
+    console.log('DetailAbility emmit todo', todo)
+    // emitter.emit('todo_detail', todo)
+    // this.context.eventHub.emit('todo_detail', todo)
   }
 
   onDestroy(): void {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'DetailAbility onDestroy');
+
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
@@ -39,15 +45,21 @@ export default class DetailAbility extends UIAbility {
   }
 
   onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    hilog.info(DOMAIN, 'testTag', '%{public}s', 'DetailAbility onNewWant', want);
+    hilog.info(DOMAIN, 'testTag', '%{public}s', 'DetailAbility onNewWant');
     const todo = want?.parameters?.['todo'];
+    console.log('>>>todo>>>', todo);
     if (!todo) {
       hilog.error(DOMAIN, 'testTag', 'todo is null');
       return;
     }
 
-    const todoInfo =new TodoViewModel( JSON.parse(todo as string) as TodoModel);
+    const todoInfo = new TodoViewModel(JSON.parse(todo as string) as TodoModel);
     AppStorageV2.connect<TodoViewModel>(TodoViewModel, 'todo_detail', () => todoInfo)
+
+    //
+    console.log('DetailAbility onNewWant > emmit todo', todo)
+    // emitter.emit('todo_detail', todo)
+    // this.context.eventHub.emit('todo_detail', todo)
   }
 
   onWindowStageDestroy(): void {
@@ -62,6 +74,12 @@ export default class DetailAbility extends UIAbility {
 
   onBackground(): void {
     // Ability has back to background
+    AppStorageV2.remove('todo_detail');
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'DetailAbility onBackground');
+  }
+
+  onBackPressed(): boolean {
+    hilog.info(DOMAIN, 'testTag', '%{public}s', 'DetailAbility onBackPressed');
+    return true;
   }
 }
